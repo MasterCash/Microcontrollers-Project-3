@@ -50,3 +50,15 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Keil Files
+*.u*
+*.Bak
+*.Inp
+*.M51
+*.Opt
+*.plg
+*.lst
+[B|b]uild/
+[O|o]bjects/
+[L|l]istings/
