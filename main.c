@@ -6,7 +6,7 @@
 // mode = 0 - tune playing mode
 // mode = 1 - display songs
 // mode = 2 - keyboard mode
-char mode = 0;
+char mode = 1;
 sbit SPEAKER = P1^7;
 //Note Chart
 unsigned int notes[] = 
@@ -32,7 +32,7 @@ unsigned int notes[] =
 void timerover(unsigned int t)
 {
 	// looping over causes imprecise timing due to loop nature 
-	unsigned char loop = 100;
+	unsigned char loop = 255;
 	// make sure not to overide the Timer1 settings
 	// (hopefully this makes sure it doesn't mess up if it is running)
 	unsigned int currentTMOD = TMOD >> 4 << 4;
@@ -54,29 +54,6 @@ void timerover(unsigned int t)
 	}
 }
 
-void playSong1()
-{
-	//My attempt to make hot cross buns.
-	playNote(notes[4]);
-	playNote(notes[2]);
-	playNote(notes[0]);
-	timerover(4608);
-	playNote(notes[0]);
-	playNote(notes[0]);
-	playNote(notes[0]);
-	timerover(4608);
-	playNote(notes[2]);
-	playNote(notes[2]);
-	playNote(notes[2]);
-	timerover(4608);
-	playNote(notes[4]);
-	timerover(4608);
-	playNote(notes[2]);
-	timerover(4608);
-	playNote(notes[0]);
-	timerover(4608);
-
-}
 
 /*
  * Uses Timer 0 AND Timer 1 to play a note for .5 sec
@@ -86,7 +63,7 @@ void playSong1()
 void playNote(unsigned int t)
 {
 	// looping over causes imprecise timing due to loop nature 
-	unsigned char loop = 100;
+	unsigned char loop = 255;
 	
 	// set TMOD.
 	TMOD = 0x11;
@@ -95,8 +72,8 @@ void playNote(unsigned int t)
 	//run the pause.
 	for(; loop > 0; loop--)
 	{
-		TH0 = -4608 >> 8;
-		TL0 = -4608;
+		TH0 = -921659 >> 8;
+		TL0 = -921659;
 		TR0 = 1;
 		//run while timer goes, speaker may slightly change.
 		while(TF0 == 0)
@@ -113,6 +90,34 @@ void playNote(unsigned int t)
 		
 		TF0 = 0;
 	}
+}
+void playSong1()
+{
+	//My attempt to make hot cross buns.
+	playNote(notes[4]);
+	playNote(notes[2]);
+	playNote(notes[0]);
+	timerover(921659);
+	timerover(921659);
+	playNote(notes[4]);
+	playNote(notes[2]);
+	playNote(notes[0]);
+	timerover(921659);
+	playNote(notes[0]);
+	playNote(notes[0]);
+	playNote(notes[0]);
+	timerover(921659);
+	playNote(notes[2]);
+	playNote(notes[2]);
+	playNote(notes[2]);
+	timerover(921659);
+	playNote(notes[4]);
+	timerover(921659);
+	playNote(notes[2]);
+	timerover(921659);
+	playNote(notes[0]);
+	timerover(921659);
+
 }
 
 void main()
@@ -138,11 +143,14 @@ void main()
 	**********************/
 	while(1)
 	{
+		
 		switch(mode)
 		{
 			case 0:
 				break;
 			case 1:
+				playSong1();
+				mode = 0;
 				break;
 			case 2:
 				break;
