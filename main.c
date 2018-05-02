@@ -54,6 +54,29 @@ void timerover(unsigned int t)
 	}
 }
 
+void playSong1()
+{
+	//My attempt to make hot cross buns.
+	playNote(notes[4]);
+	playNote(notes[2]);
+	playNote(notes[0]);
+	timerover(4608);
+	playNote(notes[0]);
+	playNote(notes[0]);
+	playNote(notes[0]);
+	timerover(4608);
+	playNote(notes[2]);
+	playNote(notes[2]);
+	playNote(notes[2]);
+	timerover(4608);
+	playNote(notes[4]);
+	timerover(4608);
+	playNote(notes[2]);
+	timerover(4608);
+	playNote(notes[0]);
+	timerover(4608);
+
+}
 
 /*
  * Uses Timer 0 AND Timer 1 to play a note for .5 sec
