@@ -1,0 +1,4 @@
+".\Objects\uart.obj",
+".\Objects\main.obj" 
+TO ".\Objects\P3" 
+PRINT(".\Listings\P3.m51") RAMSIZE(256) 

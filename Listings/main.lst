@@ -1,0 +1,159 @@
+C51 COMPILER V9.57.0.0   MAIN                                                              04/28/2018 18:25:37 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.
+                    -\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          //include <reg51.h>
+   2          #include <reg932.h>
+   3          #include "uart.h"
+   4          
+   5          //current state of the project
+   6          // mode = 0 - tune playing mode
+   7          // mode = 1 - display songs
+   8          // mode = 2 - keyboard mode
+   9          char mode = 0;
+  10          sbit SPEAKER = P1^7;
+  11          //Note Chart
+  12          unsigned int notes[] = 
+  13          {
+  14            1758, // C
+  15            1663, // C#
+  16            1567, // D
+  17            1481, // D#
+  18            1396, // E
+  19            1320, // F
+  20            1245, // F#
+  21            1175, // G
+  22            1110, // G#
+  23            1047, // A
+  24            988, // A#
+  25            932, // B
+  26          };
+  27          
+  28          /*
+  29           * Expects Timer 0 to not be in use.
+  30           * For Timer Load Values greater than 65535
+  31           */
+  32          void timerover(unsigned int t)
+  33          {
+  34   1        // looping over causes imprecise timing due to loop nature 
+  35   1        unsigned char loop = 100;
+  36   1        // make sure not to overide the Timer1 settings
+  37   1        // (hopefully this makes sure it doesn't mess up if it is running)
+  38   1        unsigned int currentTMOD = TMOD >> 4 << 4;
+  39   1        // attach the timer 0 mode we want
+  40   1        currentTMOD += 0x01;
+  41   1        // set tmod to that mode.
+  42   1        TMOD = currentTMOD;
+  43   1        // get the preload val
+  44   1        t = t / loop;
+  45   1        
+  46   1        //run the pause.
+  47   1        for(; loop > 0; loop--)
+  48   1        {
+  49   2          TH0 = -t >> 8;
+  50   2          TL0 = -t;
+  51   2          TR0 = 1;
+  52   2          while(TF0 == 0);
+  53   2          TF0 = 0;
+  54   2        }
+C51 COMPILER V9.57.0.0   MAIN                                                              04/28/2018 18:25:37 PAGE 2   
+
+  55   1      }
+  56          
+  57          
+  58          /*
+  59           * Uses Timer 0 AND Timer 1 to play a note for .5 sec
+  60           * assumes that both timers are not in use
+  61           * t is preload for note square wave
+  62           */
+  63          void playNote(unsigned int t)
+  64          {
+  65   1        // looping over causes imprecise timing due to loop nature 
+  66   1        unsigned char loop = 100;
+  67   1        
+  68   1        // set TMOD.
+  69   1        TMOD = 0x11;
+  70   1        SPEAKER = 0;
+  71   1        
+  72   1        //run the pause.
+  73   1        for(; loop > 0; loop--)
+  74   1        {
+  75   2          TH0 = -4608 >> 8;
+  76   2          TL0 = -4608;
+  77   2          TR0 = 1;
+  78   2          //run while timer goes, speaker may slightly change.
+  79   2          while(TF0 == 0)
+  80   2          {
+  81   3            // hopefully this works right
+  82   3            TH1 = -t >> 8;
+  83   3            TL1 = -t;
+  84   3            TR1 = 1;
+  85   3            // toggle speaker
+  86   3            SPEAKER = ~SPEAKER;
+  87   3            while(TF1 == 0);
+  88   3            TF1 = 0;
+  89   3          }
+  90   2      
+  91   2          TF0 = 0;
+  92   2        }
+  93   1      }
+  94          
+  95          void main()
+  96          {
+  97   1        P1M1 = 0x00;
+  98   1        EA = 1;
+  99   1        //to remove warnings**
+ 100   1        uart_init();
+ 101   1        uart_transmit('a');
+ 102   1        uart_get();
+ 103   1        //********************
+ 104   1        /**********************
+ 105   1          TO-DO
+ 106   1          -------------------
+ 107   1          Play two Short Tunes(~4 seconds long)
+ 108   1          Display Song Title of Each on PC Term via serial
+ 109   1          Make keyboard with atleast 3 buttons like keys
+ 110   1          Use 1-2 buttons to control mode of opp(options above are modes)
+ 111   1          must be able to change modes in middle of stored tune is playing
+ 112   1          use 8051 ports to connect a secondary device via breadboard to do some opp
+ 113   1           - Idea: display of LEDs for different notes
+ 114   1          Each Member had their own feature.
+ 115   1        **********************/
+ 116   1        while(1)
+C51 COMPILER V9.57.0.0   MAIN                                                              04/28/2018 18:25:37 PAGE 3   
+
+ 117   1        {
+ 118   2          switch(mode)
+ 119   2          {
+ 120   3            case 0:
+ 121   3              playNote(notes[1]);
+ 122   3              break;
+ 123   3            case 1:
+ 124   3              timerover(37600);
+ 125   3              break;
+ 126   3            case 2:
+ 127   3              break;
+ 128   3          }
+ 129   2        }
+ 130   1      }
+ 131          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    157    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     25       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
