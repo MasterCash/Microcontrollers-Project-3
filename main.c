@@ -9,7 +9,14 @@
 char mode = 0;
 sbit LED = P2^4;
 sbit SPEAKER = P1^7;
+sbit SA = P0^2;
+sbit SB = P1^3;
+sbit SC = P3^1;
+sbit BTN1 = P2^0;
+sbit BTN2 = P0^1;
+sbit BTN3 = P2^3;
 
+//sbit SD = P2^5;
 
 //Note Chart C4 - B4
 unsigned int notes[] = 
@@ -72,6 +79,44 @@ void time8b(unsigned char t)
 }
 */
 
+ void setMode()
+ {
+   switch(mode)
+   {
+     case 0:
+      SA = 0;
+      SB = 0;
+      SC = 0;
+      //SD = 0;
+      break;
+    case 1:
+      SA = 1;
+      SB = 0;
+      SC = 0;
+      //SD = 0;
+      break;
+    case 2:
+      SA = 0;
+      SB = 1;
+      SC = 0;
+      //SD = 0;
+      break;
+    case 3:
+      SA = 1;
+      SB = 1;
+      SC = 0;
+      //SD = 0;
+      break;
+    case 4:
+      SA = 0;
+      SB = 0;
+      SC = 1;
+      //SD = 0;
+      break;
+   }
+ }
+
+
 /*
  * Expects Timer 0 to not be in use.
  * For Timer Load Values greater than 65535
@@ -113,7 +158,6 @@ void playNote(unsigned int note, unsigned char type)
 	// looping over causes imprecise timing due to loop nature 
 	unsigned char loop = 225;
 	unsigned int timerLoad = beats[type];
-  unsigned int 
 	// set TMOD.
 	TMOD = 0x11;
 	SPEAKER = 0;
@@ -147,6 +191,20 @@ void playNote(unsigned int note, unsigned char type)
   timerover(beats[0]); //articuation pause
 }
 
+void holdNote(unsigned int note)
+{
+  SPEAKER = 0;
+  // hopefully this works right
+  TH0 = -note >> 8;
+  TL0 = -note;
+  TR0 = 1;
+  // toggle speaker
+  SPEAKER = ~SPEAKER;
+  while(TF0 == 0);
+  TR0 = 0;
+  TF0 = 0;        
+}
+
 /* 
  * Song number 1 Hot Cross Buns
  */
@@ -177,11 +235,23 @@ void playSong1()
     timerover(SEC);
 }
 
+void keyboard()
+{
+  if(BTN1 == 0)
+    holdNote(notes[0]);
+  else if(BTN2 == 0)
+    holdNote(notes[2]);
+  else if(BTN3 == 0)
+    holdNote(notes[4]);
+}
 
 void main()
 {
 	P1M1 = 0x00;
   P2M1 = 0x00;
+  P0M1 = 0x00;
+
+  
 	EA = 1;
 	//to remove warnings**
 	//uart_init();
@@ -191,32 +261,39 @@ void main()
 	/**********************
 		TO-DO
 		-------------------
-		Play two Short Tunes(~4 seconds long)
-		Display Song Title of Each on PC Term via serial
-		Make keyboard with atleast 3 buttons like keys
-		Use 1-2 buttons to control mode of opp(options above are modes)
-		must be able to change modes in middle of stored tune is playing
-		use 8051 ports to connect a secondary device via breadboard to do some opp
-		 - Idea: display of LEDs for different notes
-		Each Member had their own feature.
+		[X]Play two Short Tunes(~4 seconds long)
+		[]Display Song Title of Each on PC Term via serial
+		[X]Make keyboard with atleast 3 buttons like keys
+		[]Use 1-2 buttons to control mode of opp(options above are modes)
+      - must be able to change modes in middle of stored tune is playing
+		[X]use 8051 ports to connect a secondary device via breadboard to do some opp
+		  -Using seven-segment display to show mode
+      - Idea: display of LEDs for different notes
+		[]Each Member had their own feature.
 	**********************/
 	while(1)
 	{
-    playSong1();
-    
+    //setMode();
     switch(mode)
     {
       case 0:
+
+        keyboard();
         break;
       case 1:
         break;
       case 2:
+        playSong1();
+
         break;
       case 3:
+
         break;
       case 4:
+
         break;
     }
 	}
 }
+
 
