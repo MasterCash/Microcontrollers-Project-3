@@ -141,22 +141,31 @@ void playNote(unsigned int note, unsigned char type, int LED)
 	{
 		case 1:
 			LED1 = 0;
+			break;
 		case 2:
 			LED2 = 0;
+			break;
 		case 3:
 			LED3 = 0;
+			break;
 		case 4:
 			LED4 = 0;
+			break;
 		case 5:
 			LED5 = 0;
+			break;
 		case 6:
 			LED6 = 0;
+			break;
 		case 7:
 			LED7 = 0;
+			break;
 		case 8:
 			LED8 = 0;
+			break;
 		case 9:
 			LED9 = 0;
+			
 
 	}
 		while(TF0 == 0)
@@ -180,22 +189,31 @@ void playNote(unsigned int note, unsigned char type, int LED)
 	{
 		case 1:
 			LED1 = 1;
+			break;
 		case 2:
 			LED2 = 1;
+			break;
 		case 3:
 			LED3 = 1;
+			break;
 		case 4:
 			LED4 = 1;
+			break;
 		case 5:
 			LED5 = 1;
+			break;
 		case 6:
 			LED6 = 1;
+			break;
 		case 7:
 			LED7 = 1;
+			break;
 		case 8:
 			LED8 = 1;
+			break;
 		case 9:
 			LED9 = 1;
+			
 
 	};
 	}
@@ -237,15 +255,18 @@ void pianokeys()
 {
 	if(!sw1)
 	{
-		playNote(notes[9], 3, 1);	
+		timerover(SEC);
+		playNote(notes[9], 2, 1);	
 	}
 	else if(!sw2)
 	{
-		playNote(notes[11], 3, 2);
+		timerover(SEC);
+		playNote(notes[11], 2, 2);
 	}
 	else if(!sw3)
 	{
-		playNote(notes[0], 3, 3);
+		timerover(SEC);
+		playNote(notes[0], 2, 3);
 	}
 }
 
