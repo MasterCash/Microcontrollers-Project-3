@@ -7,8 +7,20 @@
 // mode = 1 - display songs
 // mode = 2 - keyboard mode
 char mode = 0;
-sbit LED = P2^4;
 sbit SPEAKER = P1^7;
+sbit sw1 = P2^0; 
+sbit sw2 = P0^1; 
+sbit sw3 = P2^3; 
+sbit LED1 = P2^7;
+sbit LED2 = P0^5;
+sbit LED3 = P2^7;
+sbit LED4 = P0^6;
+sbit LED5 = P1^4;
+sbit LED6 = P0^0;
+sbit LED7 = P2^5;
+sbit LED8 = P0^7;
+sbit LED9 = P2^6;
+
 
 
 //Note Chart C4 - B4
@@ -102,18 +114,19 @@ void timerover(unsigned int t)
 }
 
 
+
 /*
  * Uses Timer 0 AND Timer 1 to play a note 
  * assumes that both timers are not in use
  * note is preload for square wave for that frequency of that note
  * type is the type of note IE: 1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note
  */
-void playNote(unsigned int note, unsigned char type)
+void playNote(unsigned int note, unsigned char type, int LED)
 {
 	// looping over causes imprecise timing due to loop nature 
 	unsigned char loop = 225;
 	unsigned int timerLoad = beats[type];
-  unsigned int 
+  	unsigned int 
 	// set TMOD.
 	TMOD = 0x11;
 	SPEAKER = 0;
@@ -124,7 +137,28 @@ void playNote(unsigned int note, unsigned char type)
 		TL0 = -timerLoad;
 		TR0 = 1;
 		//run while timer goes, speaker may slightly change.
-    LED =0;
+    switch(LED)
+	{
+		case 1:
+			LED1 = 0;
+		case 2:
+			LED2 = 0;
+		case 3:
+			LED3 = 0;
+		case 4:
+			LED4 = 0;
+		case 5:
+			LED5 = 0;
+		case 6:
+			LED6 = 0;
+		case 7:
+			LED7 = 0;
+		case 8:
+			LED8 = 0;
+		case 9:
+			LED9 = 0;
+
+	}
 		while(TF0 == 0)
 		{
       if(note > 0)
@@ -142,7 +176,28 @@ void playNote(unsigned int note, unsigned char type)
 		}
     TR0 = 0;
 		TF0 = 0;
-    LED =1;
+    switch(LED)
+	{
+		case 1:
+			LED1 = 1;
+		case 2:
+			LED2 = 1;
+		case 3:
+			LED3 = 1;
+		case 4:
+			LED4 = 1;
+		case 5:
+			LED5 = 1;
+		case 6:
+			LED6 = 1;
+		case 7:
+			LED7 = 1;
+		case 8:
+			LED8 = 1;
+		case 9:
+			LED9 = 1;
+
+	};
 	}
   timerover(beats[0]); //articuation pause
 }
@@ -150,38 +205,54 @@ void playNote(unsigned int note, unsigned char type)
 /* 
  * Song number 1 Hot Cross Buns
  */
+
 void playSong1()
 {
 	//My attempt to make hot cross buns.
 	timerover(SEC);
-		playNote(notes[4], 2); // quarter note
-    playNote(notes[2], 2); // quarter note
-    playNote(notes[0], 3);
+	playNote(notes[4], 2, 1); // quarter note
+    playNote(notes[2], 2, 1); // quarter note
+    playNote(notes[0], 3, 1);
     
-    playNote(notes[4], 2);
-    playNote(notes[2], 2);
-    playNote(notes[0], 3);
+    playNote(notes[4], 2, 1);
+    playNote(notes[2], 2, 1);
+    playNote(notes[0], 3, 1);
     
-    playNote(notes[0], 1);
-    playNote(notes[0], 1);
-    playNote(notes[0], 1);
-    playNote(notes[0], 1);
-    playNote(notes[2], 1);
-    playNote(notes[2], 1);
-    playNote(notes[2], 1);
-    playNote(notes[2], 1);
+    playNote(notes[0], 1, 1);
+    playNote(notes[0], 1, 1);
+    playNote(notes[0], 1, 1);
+    playNote(notes[0], 1, 1);
+    playNote(notes[2], 1, 1);
+    playNote(notes[2], 1, 1);
+    playNote(notes[2], 1, 1);
+    playNote(notes[2], 1, 1);
     
-    playNote(notes[4], 2);
-    playNote(notes[2], 2);
-    playNote(notes[0], 3);
+    playNote(notes[4], 2, 1);
+    playNote(notes[2], 2, 1);
+    playNote(notes[0], 3, 1);
     timerover(SEC);
 }
 
+void pianokeys()
+{
+	if(!sw1)
+	{
+		playNote(notes[9], 3, 1);	
+	}
+	else if(!sw2)
+	{
+		playNote(notes[11], 3, 2);
+	}
+	else if(!sw3)
+	{
+		playNote(notes[0], 3, 3);
+	}
+}
 
 void main()
 {
 	P1M1 = 0x00;
-  P2M1 = 0x00;
+  	P2M1 = 0x00;
 	EA = 1;
 	//to remove warnings**
 	//uart_init();
@@ -202,7 +273,7 @@ void main()
 	**********************/
 	while(1)
 	{
-    playSong1();
+    pianokeys();
     
     switch(mode)
     {
