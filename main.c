@@ -255,17 +255,14 @@ void pianokeys()
 {
 	if(!sw1)
 	{
-		timerover(SEC);
 		playNote(notes[9], 2, 1);	
 	}
 	else if(!sw2)
 	{
-		timerover(SEC);
 		playNote(notes[11], 2, 2);
 	}
 	else if(!sw3)
 	{
-		timerover(SEC);
 		playNote(notes[0], 2, 3);
 	}
 }
