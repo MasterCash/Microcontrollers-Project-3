@@ -2,7 +2,6 @@
 #include <reg932.h>
 #include "uart.h"
 
-
 //variables
 unsigned char mode = 0;
 sbit LED = P2^4;
@@ -13,34 +12,7 @@ sbit SC = P3^1;
 sbit BTN1 = P2^0;
 sbit BTN2 = P0^1;
 sbit BTN3 = P2^3;
-sbit LED1 = P2^0;
-sbit LED2 = P0^1;
-sbit LED3 = P2^3;
-sbit LED4 = P0^6;
-sbit LED5 = P1^4;
-sbit LED6 = P0^0;
-sbit LED7 = P2^5;
-sbit LED8 = P0^7;
-sbit LED9 = P2^6;
 
-
-
-//Note Chart C4 - B4
-unsigned int notes4[] = 
-{
-	14090, // C
-	13300, // C#
-	12553, // D
-	11848, // D#
-	11183, // E
-	10556, // F
-	9963, // F#
-	9404, // G
-	8876, // G#
-	8378, // A
-	7908, // A#
-	7464, // B
-};
 
 unsigned int notes5[] = 
 {
@@ -73,10 +45,6 @@ unsigned int notes6[] =
   1977,
   1866
 };
-<<<<<<< HEAD
-
-=======
->>>>>>> 444b441e50d72a5e3d6e6b89b2863847f22d7bda
 
 
 //1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note, 0 = articuation pause bpm = 120
@@ -86,7 +54,12 @@ unsigned int beats[] =
   3932,   // Eighth Note
   8028,  // Quarter Note
   16220,  // Half Note
-  32605   // Whole Note
+  32605,   // Whole Note
+  163,
+  3407,
+  6668,
+  13500,
+  27165
 };
 
 unsigned int SEC = 16384;
@@ -129,18 +102,7 @@ void holdNote(unsigned int note)
   // toggle speaker
   SPEAKER = 1;
   while(TF1 == 0);
-  {
   SPEAKER = 0;
-  if(note==0)
-  	LED1 = 1;
-  else if(note == 2)
-  	LED2 = 1;
-  else if(note == 4)
-  	LED3 = 1; 
-  }
-  LED1 = 0;
-  LED2 = 0;
-  LED3 = 0;
   TR1 = 0;
   TF1 = 0;        
 }
@@ -151,11 +113,11 @@ void holdNote(unsigned int note)
  * note is preload for square wave for that frequency of that note
  * type is the type of note: 1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note
  */
-void playNote(unsigned int note, unsigned char type)
+void playNote(unsigned int note, unsigned char type, bit tempo)
 {
 	// looping over causes imprecise timing due to loop nature 
 	unsigned char loop = 225;
-	unsigned int timerLoad = beats[type];
+	unsigned int timerLoad = (tempo == 0 ? beats[type] : beats[type + 4]);
 
 	//run the pause.
 	for(; loop > 0; loop--)
@@ -164,7 +126,6 @@ void playNote(unsigned int note, unsigned char type)
 		TL0 = -timerLoad;
 		TR0 = 1;
 		//run while timer goes, speaker may slightly change.
-    //LED =0;
     SPEAKER = 0;
 		while(TF0 == 0)
 		{
@@ -173,7 +134,6 @@ void playNote(unsigned int note, unsigned char type)
 		}
     TR0 = 0;
 		TF0 = 0;
-    //LED =1;
 	}
   timerover(beats[0]); //articuation pause
 }
@@ -186,58 +146,59 @@ void playNote(unsigned int note, unsigned char type)
 void playSong1()
 {
 	//My attempt to make hot cross buns.
-	timerover(SEC);
-  playNote(notes5[4], 2); // quarter note
-  playNote(notes5[2], 2); // quarter note
-  playNote(notes5[0], 3);
+	//timerover(SEC);
+  playNote(notes5[4], 2, 0); // quarter note
+  playNote(notes5[2], 2, 0); // quarter note
+  playNote(notes5[0], 3, 0);
   
-  playNote(notes5[4], 2);
-  playNote(notes5[2], 2);
-  playNote(notes5[0], 3);
+  playNote(notes5[4], 2, 0);
+  playNote(notes5[2], 2, 0);
+  playNote(notes5[0], 3, 0);
   
-  playNote(notes5[0], 1);
-  playNote(notes5[0], 1);
-  playNote(notes5[0], 1);
-  playNote(notes5[0], 1);
-  playNote(notes5[2], 1);
-  playNote(notes5[2], 1);
-  playNote(notes5[2], 1);
-  playNote(notes5[2], 1);
+  playNote(notes5[0], 1, 0);
+  playNote(notes5[0], 1, 0);
+  playNote(notes5[0], 1, 0);
+  playNote(notes5[0], 1, 0);
+  playNote(notes5[2], 1, 0);
+  playNote(notes5[2], 1, 0);
+  playNote(notes5[2], 1, 0);
+  playNote(notes5[2], 1, 0);
   
-  playNote(notes5[4], 2);
-  playNote(notes5[2], 2);
-  playNote(notes5[0], 3);
+  playNote(notes5[4], 2, 0);
+  playNote(notes5[2], 2, 0);
+  playNote(notes5[0], 3, 0);
   timerover(SEC);
 }
 
 void playSong2()
 {
-  playNote(notes6[4], 2);
-  playNote(notes5[11], 1);
-  playNote(notes6[0], 1);
-  playNote(notes6[2], 2);
-  playNote(notes6[0], 1);
-  playNote(notes5[11], 1);
+  playNote(notes6[4], 2, 1);
+  playNote(notes5[11], 1, 1);
+  playNote(notes6[0], 1, 1);
+  playNote(notes6[2], 2, 1);
+  playNote(notes6[0], 1, 1);
+  playNote(notes5[11], 1, 1);
 
-  playNote(notes5[9], 2);
-  playNote(notes5[9], 1);
-  playNote(notes6[0], 1);
-  playNote(notes6[4], 2);
-  playNote(notes6[2], 1);
-  playNote(notes6[0], 1);
+  playNote(notes5[9], 2, 1);
+  playNote(notes5[9], 1, 1);
+  playNote(notes6[0], 1, 1);
+  playNote(notes6[4], 2, 1);
+  playNote(notes6[2], 1, 1);
+  playNote(notes6[0], 1, 1);
 
-  playNote(notes5[11], 2);
-  playNote(notes6[0], 1);
-  playNote(notes6[2], 2);
-  playNote(notes6[4], 2);
+  playNote(notes5[11], 2, 1);
+  playNote(0, 1, 1);
+  playNote(notes6[0], 1, 1);
+  playNote(notes6[2], 2, 1);
+  playNote(notes6[4], 2, 1);
 
-  playNote(notes6[0], 2);
-  playNote(notes5[9], 2);
-  playNote(notes5[9], 1);
-  playNote(notes5[9], 1);
-  playNote(notes5[11], 1);
-  playNote(notes6[0], 1);
-
+  playNote(notes6[0], 2, 1);
+  playNote(notes5[9], 2, 1);
+  playNote(notes5[9], 1, 1);
+  playNote(notes5[9], 1, 1);
+  playNote(notes5[11], 1, 1);
+  playNote(notes6[0], 1, 1);
+  timerover(SEC);
 }
 
 void keyboard()
@@ -258,17 +219,17 @@ void ExternInterrupt() interrupt 0
 
 void main()
 {
+  unsigned char HotxBuns[] = "Hot cross buns";
   unsigned char k = 0;
 	P1M1 = 0x00;
   P2M1 = 0x00;
   P0M1 = 0x00;
   TMOD = 0x11;
   IEN0 = 0x9F;  
-  mode = 0;
+  mode = 2;
 	EA = 1;
   
 	//to remove warnings**
-	//uart_init();
 	//uart_transmit('a');
 	//uart_get();
 	//********************
@@ -285,9 +246,13 @@ void main()
       - Idea: display of LEDs for different notes4
 		[]Each Member had their own feature.
 	**********************/
+  //uart_init();
 	while(1)
 	{
-   SA  = 1;
+    SA  = 1;
+     
+    //playSong1();
+    playSong2();
     //controls what mode we do.
     switch(mode)
     {
@@ -298,7 +263,6 @@ void main()
       case 1:
         break;
       case 2:
-
         break;
       case 3:
 
