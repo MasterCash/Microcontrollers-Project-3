@@ -16,10 +16,9 @@ sbit BTN1 = P2^0;
 sbit BTN2 = P0^1;
 sbit BTN3 = P2^3;
 
-//sbit SD = P2^5;
 
 //Note Chart C4 - B4
-unsigned int notes[] = 
+unsigned int notes4[] = 
 {
 	14090, // C
 	13300, // C#
@@ -33,6 +32,22 @@ unsigned int notes[] =
 	8378, // A
 	7908, // A#
 	7464, // B
+};
+
+unsigned int notes5[] = 
+{
+  7045,
+  6649,
+  6276,
+  5924,
+  5591,
+  5278,
+  4981,
+  4702,
+  4438,
+  4189,
+  3954,
+  3732
 };
 
 //1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note, 0 = articuation pause
@@ -79,6 +94,7 @@ void time8b(unsigned char t)
 }
 */
 
+/*
  void setMode()
  {
    switch(mode)
@@ -115,7 +131,7 @@ void time8b(unsigned char t)
       break;
    }
  }
-
+*/
 
 /*
  * Expects Timer 0 to not be in use.
@@ -125,7 +141,7 @@ void timerover(unsigned int t)
 {
 	// looping over causes imprecise timing due to loop nature 
 	unsigned char loop = 225;
-	// make sure not to overide the Timer1 settings
+	/*// make sure not to overide the Timer1 settings
 	// (hopefully this makes sure it doesn't mess up if it is running)
 	unsigned int currentTMOD = TMOD >> 4 << 4;
 	// attach the timer 0 mode we want
@@ -133,7 +149,7 @@ void timerover(unsigned int t)
 	// set tmod to that mode.
 	TMOD = currentTMOD;
 	// get the preload val
-	
+	*/
 	//run the pause.
 	for(; loop > 0; loop--)
 	{
@@ -146,6 +162,20 @@ void timerover(unsigned int t)
 	}
 }
 
+void holdNote(unsigned int note)
+{
+  SPEAKER = 0;
+  // hopefully this works right
+  TH1 = -note >> 8;
+  TL1 = -note;
+  TR1 = 1;
+  // toggle speaker
+  SPEAKER = 1;
+  while(TF1 == 0);
+  SPEAKER = 0;
+  TR1 = 0;
+  TF1 = 0;        
+}
 
 /*
  * Uses Timer 0 AND Timer 1 to play a note 
@@ -158,9 +188,7 @@ void playNote(unsigned int note, unsigned char type)
 	// looping over causes imprecise timing due to loop nature 
 	unsigned char loop = 225;
 	unsigned int timerLoad = beats[type];
-	// set TMOD.
-	TMOD = 0x11;
-	SPEAKER = 0;
+
 	//run the pause.
 	for(; loop > 0; loop--)
 	{
@@ -168,42 +196,21 @@ void playNote(unsigned int note, unsigned char type)
 		TL0 = -timerLoad;
 		TR0 = 1;
 		//run while timer goes, speaker may slightly change.
-    LED =0;
+    //LED =0;
+    SPEAKER = 0;
 		while(TF0 == 0)
 		{
       if(note > 0)
-      {
-        // hopefully this works right
-        TH1 = -note >> 8;
-        TL1 = -note;
-        TR1 = 1;
-        // toggle speaker
-        SPEAKER = ~SPEAKER;
-        while(TF1 == 0);
-        TR1 = 0;
-        TF1 = 0;        
-      }
+        holdNote(note);
 		}
     TR0 = 0;
 		TF0 = 0;
-    LED =1;
+    //LED =1;
 	}
   timerover(beats[0]); //articuation pause
 }
 
-void holdNote(unsigned int note)
-{
-  SPEAKER = 0;
-  // hopefully this works right
-  TH0 = -note >> 8;
-  TL0 = -note;
-  TR0 = 1;
-  // toggle speaker
-  SPEAKER = ~SPEAKER;
-  while(TF0 == 0);
-  TR0 = 0;
-  TF0 = 0;        
-}
+
 
 /* 
  * Song number 1 Hot Cross Buns
@@ -212,45 +219,55 @@ void playSong1()
 {
 	//My attempt to make hot cross buns.
 	timerover(SEC);
-		playNote(notes[4], 2); // quarter note
-    playNote(notes[2], 2); // quarter note
-    playNote(notes[0], 3);
-    
-    playNote(notes[4], 2);
-    playNote(notes[2], 2);
-    playNote(notes[0], 3);
-    
-    playNote(notes[0], 1);
-    playNote(notes[0], 1);
-    playNote(notes[0], 1);
-    playNote(notes[0], 1);
-    playNote(notes[2], 1);
-    playNote(notes[2], 1);
-    playNote(notes[2], 1);
-    playNote(notes[2], 1);
-    
-    playNote(notes[4], 2);
-    playNote(notes[2], 2);
-    playNote(notes[0], 3);
-    timerover(SEC);
+  playNote(notes4[4], 2); // quarter note
+  playNote(notes4[2], 2); // quarter note
+  playNote(notes4[0], 3);
+  
+  playNote(notes4[4], 2);
+  playNote(notes4[2], 2);
+  playNote(notes4[0], 3);
+  
+  playNote(notes4[0], 1);
+  playNote(notes4[0], 1);
+  playNote(notes4[0], 1);
+  playNote(notes4[0], 1);
+  playNote(notes4[2], 1);
+  playNote(notes4[2], 1);
+  playNote(notes4[2], 1);
+  playNote(notes4[2], 1);
+  
+  playNote(notes4[4], 2);
+  playNote(notes4[2], 2);
+  playNote(notes4[0], 3);
+  timerover(SEC);
 }
+
+
+void playSong2()
+{
+	
+}
+
 
 void keyboard()
 {
   if(BTN1 == 0)
-    holdNote(notes[0]);
+    holdNote(notes4[0]);
   else if(BTN2 == 0)
-    holdNote(notes[2]);
+    holdNote(notes4[2]);
   else if(BTN3 == 0)
-    holdNote(notes[4]);
+    holdNote(notes4[4]);
 }
 
 void main()
 {
+  unsigned char k = 0;
 	P1M1 = 0x00;
   P2M1 = 0x00;
   P0M1 = 0x00;
+  TMOD = 0x11;
 
+  //mode = 2;
   
 	EA = 1;
 	//to remove warnings**
@@ -268,22 +285,29 @@ void main()
       - must be able to change modes in middle of stored tune is playing
 		[X]use 8051 ports to connect a secondary device via breadboard to do some opp
 		  -Using seven-segment display to show mode
-      - Idea: display of LEDs for different notes
+      - Idea: display of LEDs for different notes4
 		[]Each Member had their own feature.
 	**********************/
 	while(1)
 	{
+    for(k = 0; k < 6; k++)
+    {
+      playNote(cchart[k], 4);
+      playNote(0, 1);
+    }
+    //holdNote(notes4[0]);
+    //playSong1();
+   // playSong2();
     //setMode();
     switch(mode)
     {
       case 0:
-
-        keyboard();
+        //keyboard();
         break;
       case 1:
+
         break;
       case 2:
-        playSong1();
 
         break;
       case 3:
