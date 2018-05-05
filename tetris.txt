@@ -1,0 +1,25 @@
+playNote(notes6[4], 2);
+playNote(notes5[11], 1);
+playNote(notes6[0], 1);
+playNote(notes6[2], 2);
+playNote(notes6[0], 1);
+playNote(notes5[11], 1);
+
+playNote(notes5[9], 2);
+playNote(notes5[9], 1);
+playNote(notes6[0], 1);
+playNote(notes6[4], 2);
+playNote(notes6[2], 1);
+playNote(notes6[0], 1);
+
+playNote(notes5[11], 2);
+playNote(notes6[0], 1);
+playNote(notes6[2], 2);
+playNote(notes6[4], 2);
+
+playNote(notes6[0], 2);
+playNote(notes5[9], 2);
+playNote(notes5[9], 1);
+playNote(notes5[9], 1);
+playNote(notes5[11], 1);
+playNote(notes6[0], 1);
