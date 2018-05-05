@@ -13,6 +13,16 @@ sbit SC = P3^1;
 sbit BTN1 = P2^0;
 sbit BTN2 = P0^1;
 sbit BTN3 = P2^3;
+sbit LED1 = P2^0;
+sbit LED2 = P0^1;
+sbit LED3 = P2^3;
+sbit LED4 = P0^6;
+sbit LED5 = P1^4;
+sbit LED6 = P0^0;
+sbit LED7 = P2^5;
+sbit LED8 = P0^7;
+sbit LED9 = P2^6;
+
 
 
 //Note Chart C4 - B4
@@ -63,7 +73,10 @@ unsigned int notes6[] =
   1977,
   1866
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 444b441e50d72a5e3d6e6b89b2863847f22d7bda
 
 
 //1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note, 0 = articuation pause bpm = 120
@@ -116,7 +129,18 @@ void holdNote(unsigned int note)
   // toggle speaker
   SPEAKER = 1;
   while(TF1 == 0);
+  {
   SPEAKER = 0;
+  if(note==0)
+  	LED1 = 1;
+  else if(note == 2)
+  	LED2 = 1;
+  else if(note == 4)
+  	LED3 = 1; 
+  }
+  LED1 = 0;
+  LED2 = 0;
+  LED3 = 0;
   TR1 = 0;
   TF1 = 0;        
 }
