@@ -50,6 +50,23 @@ unsigned int notes5[] =
   3732
 };
 
+unsigned int notes6[] = 
+{
+  3522,
+  3324,
+  3138,
+  2962,
+  2795,
+  2639,
+  2490,
+  2351,
+  2219,
+  2094,
+  1977,
+  1866
+}
+
+
 //1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note, 0 = articuation pause
 unsigned int beats[] =
 {
@@ -219,44 +236,44 @@ void playSong1()
 {
 	//My attempt to make hot cross buns.
 	timerover(SEC);
-  playNote(notes4[4], 2); // quarter note
-  playNote(notes4[2], 2); // quarter note
-  playNote(notes4[0], 3);
+  playNote(notes5[4], 2); // quarter note
+  playNote(notes5[2], 2); // quarter note
+  playNote(notes5[0], 3);
   
-  playNote(notes4[4], 2);
-  playNote(notes4[2], 2);
-  playNote(notes4[0], 3);
+  playNote(notes5[4], 2);
+  playNote(notes5[2], 2);
+  playNote(notes5[0], 3);
   
-  playNote(notes4[0], 1);
-  playNote(notes4[0], 1);
-  playNote(notes4[0], 1);
-  playNote(notes4[0], 1);
-  playNote(notes4[2], 1);
-  playNote(notes4[2], 1);
-  playNote(notes4[2], 1);
-  playNote(notes4[2], 1);
+  playNote(notes5[0], 1);
+  playNote(notes5[0], 1);
+  playNote(notes5[0], 1);
+  playNote(notes5[0], 1);
+  playNote(notes5[2], 1);
+  playNote(notes5[2], 1);
+  playNote(notes5[2], 1);
+  playNote(notes5[2], 1);
   
-  playNote(notes4[4], 2);
-  playNote(notes4[2], 2);
-  playNote(notes4[0], 3);
+  playNote(notes5[4], 2);
+  playNote(notes5[2], 2);
+  playNote(notes5[0], 3);
   timerover(SEC);
-}
-
-
-void playSong2()
-{
-	
 }
 
 
 void keyboard()
 {
   if(BTN1 == 0)
-    holdNote(notes4[0]);
+    holdNote(notes5[0]);
   else if(BTN2 == 0)
-    holdNote(notes4[2]);
+    holdNote(notes5[2]);
   else if(BTN3 == 0)
-    holdNote(notes4[4]);
+    holdNote(notes5[4]);
+}
+
+void ExternInterrupt() interrupt 0 
+{
+    //LED = 1;
+    mode++;
 }
 
 void main()
@@ -266,9 +283,10 @@ void main()
   P2M1 = 0x00;
   P0M1 = 0x00;
   TMOD = 0x11;
+  IEN0 = 0x9F;
+  //LED = 0;
 
   //mode = 2;
-  
 	EA = 1;
 	//to remove warnings**
 	//uart_init();
@@ -290,22 +308,14 @@ void main()
 	**********************/
 	while(1)
 	{
-    for(k = 0; k < 6; k++)
-    {
-      playNote(cchart[k], 4);
-      playNote(0, 1);
-    }
-    //holdNote(notes4[0]);
-    //playSong1();
-   // playSong2();
-    //setMode();
+    //LED = 0;
+   
     switch(mode)
     {
       case 0:
-        //keyboard();
+        playSong1();
         break;
       case 1:
-
         break;
       case 2:
 
