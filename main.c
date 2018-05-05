@@ -199,18 +199,7 @@ void holdNote(unsigned int note)
   // toggle speaker
   SPEAKER = 1;
   while(TF1 == 0);
-  {
   SPEAKER = 0;
-  if(note==0)
-  	LED1 = 1;
-  else if(note == 2)
-  	LED2 = 1;
-  else if(note == 4)
-  	LED3 = 1; 
-  }
-  LED1 = 0;
-  LED2 = 0;
-  LED3 = 0;
   TR1 = 0;
   TF1 = 0;        
 }
@@ -284,11 +273,23 @@ void playSong1()
 void keyboard()
 {
   if(BTN1 == 0)
+  { 
+ 	LED1 = 0;
     holdNote(notes5[0]);
+	LED1 = 1;
+  }
   else if(BTN2 == 0)
+  { 
+ 	LED2 = 0;
     holdNote(notes5[2]);
+	LED2 = 1;
+  }
   else if(BTN3 == 0)
+  {
+  	LED3 = 0;
     holdNote(notes5[4]);
+	LED3 = 1;
+  }
 }
 
 void ExternInterrupt() interrupt 0 
