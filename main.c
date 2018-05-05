@@ -10,7 +10,7 @@ char mode = 0;
 sbit LED = P2^4;
 sbit SPEAKER = P1^7;
 sbit SA = P0^2;
-sbit SB = P1^3;
+//sbit SB = P1^3;
 sbit SC = P3^1;
 sbit BTN1 = P2^0;
 sbit BTN2 = P0^1;
@@ -64,7 +64,7 @@ unsigned int notes6[] =
   2094,
   1977,
   1866
-}
+};
 
 
 //1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note, 0 = articuation pause
