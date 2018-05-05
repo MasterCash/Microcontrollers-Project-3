@@ -2,11 +2,9 @@
 #include <reg932.h>
 #include "uart.h"
 
-//current state of the project
-// mode = 0 - tune playing mode
-// mode = 1 - display songs
-// mode = 2 - keyboard mode
-char mode = 0;
+
+//variables
+unsigned char mode = 0;
 sbit LED = P2^4;
 sbit SPEAKER = P1^7;
 sbit SA = P0^2;
@@ -67,7 +65,8 @@ unsigned int notes6[] =
 };
 
 
-//1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note, 0 = articuation pause
+
+//1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note, 0 = articuation pause bpm = 120
 unsigned int beats[] =
 {
   163,    // articuation pause !!Don't use this!! Internal only
@@ -76,79 +75,8 @@ unsigned int beats[] =
   16220,  // Half Note
   32605   // Whole Note
 };
-/*
-unsigned int beats2[] =
-{
-  61,
-  1529,
-  3010,
-  6082,
-  12226
-};
-*/
+
 unsigned int SEC = 16384;
-
-
-
-/*
- * Expects Timer 0 to not be in use.
- * For Timer Load Values less than 256
- */
- /*
-void time8b(unsigned char t)
-{
-  unsigned int currentTMOD = TMOD >> 4 << 4;
-	// attach the timer 0 mode we want
-	currentTMOD += 0x01;
-	// set tmod to that mode.
-	TMOD = currentTMOD;
-  TH0 = -t;
-  TL0 = -t;
-  TR0 = 1;
-  while(TF0 == 0);
-  TR0 = 0;
-  TF0 = 0;
-}
-*/
-
-/*
- void setMode()
- {
-   switch(mode)
-   {
-     case 0:
-      SA = 0;
-      SB = 0;
-      SC = 0;
-      //SD = 0;
-      break;
-    case 1:
-      SA = 1;
-      SB = 0;
-      SC = 0;
-      //SD = 0;
-      break;
-    case 2:
-      SA = 0;
-      SB = 1;
-      SC = 0;
-      //SD = 0;
-      break;
-    case 3:
-      SA = 1;
-      SB = 1;
-      SC = 0;
-      //SD = 0;
-      break;
-    case 4:
-      SA = 0;
-      SB = 0;
-      SC = 1;
-      //SD = 0;
-      break;
-   }
- }
-*/
 
 /*
  * Expects Timer 0 to not be in use.
@@ -158,15 +86,14 @@ void timerover(unsigned int t)
 {
 	// looping over causes imprecise timing due to loop nature 
 	unsigned char loop = 225;
-	/*// make sure not to overide the Timer1 settings
+	// make sure not to overide the Timer1 settings
 	// (hopefully this makes sure it doesn't mess up if it is running)
 	unsigned int currentTMOD = TMOD >> 4 << 4;
 	// attach the timer 0 mode we want
 	currentTMOD += 0x01;
 	// set tmod to that mode.
 	TMOD = currentTMOD;
-	// get the preload val
-	*/
+  
 	//run the pause.
 	for(; loop > 0; loop--)
 	{
@@ -198,7 +125,7 @@ void holdNote(unsigned int note)
  * Uses Timer 0 AND Timer 1 to play a note 
  * assumes that both timers are not in use
  * note is preload for square wave for that frequency of that note
- * type is the type of note IE: 1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note
+ * type is the type of note: 1 = eighth note, 2 = quarter note, 3 = half note, 4 = whole note
  */
 void playNote(unsigned int note, unsigned char type)
 {
@@ -259,6 +186,35 @@ void playSong1()
   timerover(SEC);
 }
 
+void playSong2()
+{
+  playNote(notes6[4], 2);
+  playNote(notes5[11], 1);
+  playNote(notes6[0], 1);
+  playNote(notes6[2], 2);
+  playNote(notes6[0], 1);
+  playNote(notes5[11], 1);
+
+  playNote(notes5[9], 2);
+  playNote(notes5[9], 1);
+  playNote(notes6[0], 1);
+  playNote(notes6[4], 2);
+  playNote(notes6[2], 1);
+  playNote(notes6[0], 1);
+
+  playNote(notes5[11], 2);
+  playNote(notes6[0], 1);
+  playNote(notes6[2], 2);
+  playNote(notes6[4], 2);
+
+  playNote(notes6[0], 2);
+  playNote(notes5[9], 2);
+  playNote(notes5[9], 1);
+  playNote(notes5[9], 1);
+  playNote(notes5[11], 1);
+  playNote(notes6[0], 1);
+
+}
 
 void keyboard()
 {
@@ -272,8 +228,8 @@ void keyboard()
 
 void ExternInterrupt() interrupt 0 
 {
-    //LED = 1;
-    mode++;
+    LED = 0;
+    //mode++;
 }
 
 void main()
@@ -283,11 +239,10 @@ void main()
   P2M1 = 0x00;
   P0M1 = 0x00;
   TMOD = 0x11;
-  IEN0 = 0x9F;
-  //LED = 0;
-
-  //mode = 2;
+  IEN0 = 0x9F;  
+  mode = 0;
 	EA = 1;
+  
 	//to remove warnings**
 	//uart_init();
 	//uart_transmit('a');
@@ -308,12 +263,13 @@ void main()
 	**********************/
 	while(1)
 	{
-    //LED = 0;
-   
+   SA  = 1;
+    //controls what mode we do.
     switch(mode)
     {
       case 0:
-        playSong1();
+        keyboard();
+        //playSong2();
         break;
       case 1:
         break;
