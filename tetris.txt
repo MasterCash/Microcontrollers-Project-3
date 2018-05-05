@@ -23,3 +23,10 @@ playNote(notes5[9], 1);
 playNote(notes5[9], 1);
 playNote(notes5[11], 1);
 playNote(notes6[0], 1);
+
+unsigned char HotxBuns[] = "Hot cross buns";
+uart_init();
+for( i = 0; i < 14; i = i+1 ){
+	uart_transmite(HotxBuns[i]);
+}
+uart_git();
