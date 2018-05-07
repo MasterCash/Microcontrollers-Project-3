@@ -1,3 +1,5 @@
+https://www.jellynote.com/en/piano-sheet-music/nintendo/tetris-a-type-gameboy#tabs:P1
+https://www.8notes.com/scores/528.asp
 playNote(notes6[4], 2);
 playNote(notes5[11], 1);
 playNote(notes6[0], 1);
