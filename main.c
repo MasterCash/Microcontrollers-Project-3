@@ -18,6 +18,16 @@ sbit BTN3 = P2^3;
 // Flag to controll when to switch modes. (set by External Interrupt).
 bit flag = 0;
 
+sbit LEDC = P2^4;
+sbit LEDD = P0^5;
+sbit LEDE = P2^7;
+sbit LEDF = P0^6;
+sbit LEDG = P1^6;
+sbit LEDA = P0^4;
+sbit LEDB = P2^5;
+
+
+
 // Control the mode displayed on the 7-segment display two bit number.
 // Bit 1 of the number.
 sbit DISPLAYCONTROL1 = P3^0;
@@ -90,6 +100,7 @@ unsigned int BUTTONPAUSE = 3276;
 
 
 //*****************FUNCTIONS*********************
+
 /*
  * Discription: Updates the 7-Segment Display to the new mode. 
  * Requires: None.
@@ -126,6 +137,7 @@ void updateMode() {
 void display(unsigned char text[], unsigned char size) {
   unsigned char k = 0;
   // Loop through each character in the array.
+  if(flag) return;
   for(;k < size; k++) {
     // Transmit the character.
     uart_transmit(text[k]); 
@@ -146,11 +158,62 @@ void displaySong(unsigned char song[], unsigned char size) {
 }
 
 /*
+ * Discription: Turns off all the LEDs for notes.
+ * Requires: None.
+ * Returns: None.
+ */
+void shutOffLED() { LEDA = LEDB = LEDC = LEDD = LEDE = LEDF = LEDG = 1; }
+
+/*
+ * Discription: Turns on the LED corresponding to the note being played.
+ * Requires: The index of the note.
+ * Returns: None.
+ */
+void turnOnLED(unsigned char note) {
+  // Turn off LEDs.
+  shutOffLED();
+  // Turn on the light corresponding to the note.
+  switch(note) {
+    case 0:
+    case 1:
+      LEDC = 0;
+      break;
+    case 2:
+    case 3:
+      LEDD = 0;
+      break;
+    case 4:
+      LEDE = 0;
+      break;
+    case 5:
+    case 6:
+      LEDF = 0;
+      break;
+    case 7:
+    case 8:
+      LEDG = 0;
+      break;
+    case 9:
+    case 10:
+      LEDA = 0;
+      break;
+    case 11:
+      LEDB = 0;
+      break;
+  }
+}
+
+/*
  * Discription: Display Function to display a note being played via UART to Terminal.
  * Requires: index of the note being played. valid if between 0 - 11.
  * Returns: None.
  */
-void displayNote(unsigned char note) { display(notes[note], 2); }
+void displayNote(unsigned char note) { 
+  
+  display(notes[note], 2); 
+  turnOnLED(note);
+  
+}
 
 /*
  * Discription: Expects Timer 0 to not be in use. For Timer Load Values greater than 65535.
@@ -349,11 +412,21 @@ void keyboard() {
   while(!flag) {
     // Trigger note for corresponding button press. (Doesn't allow two to try and run at the same time).
     if(!BTN1)
+    {
+      turnOnLED(0);
       holdNote(notes5[0]);
+    }
     else if(!BTN2)
+    {
+      turnOnLED(2);
       holdNote(notes5[2]);
+    }
     else if(!BTN3)
+    {
+      turnOnLED(4);
       holdNote(notes5[4]);
+    }
+    shutOffLED();
   }
 }
 
@@ -398,19 +471,24 @@ void keyboard2() {
     // Get note to play and play the assigned note.
     switch(uart_get()) {
       case 'a': 
+        turnOnLED(11);
         holdNote(notes4[11]);
         break;
       case 's':
+        turnOnLED(0);
         holdNote(notes5[0]);
         break;
       case 'd':
+        turnOnLED(2);
         holdNote(notes5[2]);
         break;
       case 'f':
+        turnOnLED(4);
         holdNote(notes5[4]);
       default:
         break;
     }
+    shutOffLED();
   }    
 }
 //*************END*OF*FUNCTIONS******************
@@ -422,12 +500,12 @@ void main() {
   
   // Initialization.
 	P1M1 = 0x00;
-  P2M2 = 0x00;
   P2M1 = 0x00;
   P0M1 = 0x00;
   P3M1 = 0x00;
   TMOD = 0x11;
   EX1 = 1;
+  IT1 = 1;
   mode = 0;
 	EA = 1;
   uart_init();
@@ -442,7 +520,7 @@ void main() {
       - must be able to change modes in middle of stored tune is playing.
 		[X]use 8051 ports to connect a secondary device via breadboard to do some opperation.
 		  - Using seven-segment display to show mode.
-		[2/3]Each Member had their own feature.
+		[X]Each Member had their own feature.
     [X] Comment Code.
 	**********************/
   
@@ -464,10 +542,12 @@ void main() {
       case 1:
         displaySong(HotxBuns, 14);
         playSong1();
+        shutOffLED();
         break;
       case 2:
         displaySong(Tetris, 12);
         playSong2();
+        shutOffLED();     
         break;
       case 3:
         keyboard2();
