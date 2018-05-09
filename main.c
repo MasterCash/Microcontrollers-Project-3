@@ -397,6 +397,38 @@ void playSong2() {
   playNote(notes4[9], 2, 1);
   displayNote(9);
   playNote(notes4[9], 3, 1);
+  // Measure 5.
+  playNote(0, 1, 1);
+  displayNote(11);
+  playNote(notes4[11], 2, 1);
+  displayNote(5);
+  playNote(notes5[5], 1, 1);
+  displayNote(9);
+  playNote(notes5[9], 2, 1);
+  displayNote(7);
+  playNote(notes5[7], 1, 1);
+  displayNote(5);
+  playNote(notes5[5], 1, 1);
+  // Measure 6.
+  displayNote(4);
+  playNote(notes5[4], 2, 1);
+  playNote(0, 1, 1);
+  displayNote(0);
+  playNote(notes5[0], 1, 1);
+  displayNote(4);
+  playNote(notes5[4], 2, 1);
+  displayNote(2);
+  playNote(notes5[2], 1, 1);
+  displayNote(0);
+  playNote(notes5[0], 1, 1);
+  // Measure 7.
+  displayNote(11);
+  playNote(notes4[11], 2, 1);
+  displayNote(11);
+  playNote(notes4[11], 1, 1);
+  displayNote(0);
+  
+  playNote(notes5[0], 1, 1);
   // Only Delay the Next Play of the song if We are not switching modes.
   if(!flag)
     timerover(SEC);
