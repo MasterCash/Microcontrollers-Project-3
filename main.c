@@ -95,7 +95,7 @@ code unsigned int beats[] = {
 // One Second Wait Preload Value.
 unsigned int SEC = 16384;
 // 0.2 Second Wait Preload Value for Multiple Button Press Shielding.
-unsigned int BUTTONPAUSE = 3276;
+unsigned int BUTTONPAUSE = 6553;
 //**************END*OF*VARIABLES*****************
 
 
@@ -235,7 +235,7 @@ void timerover(unsigned int t) {
 		TH0 = -t >> 8;
 		TL0 = -t;
 		TR0 = 1;
-		while(TF0 == 0);
+		while(TF0 == 0 && !flag);
     TR0 = 0;
 		TF0 = 0;
 	}
@@ -255,7 +255,7 @@ void holdNote(unsigned int note) {
   TR1 = 1;
   // Turn On SPEAKER.
   SPEAKER = 1;
-  while(TF1 == 0);
+  while(TF1 == 0 && !flag);
   // Turn Off SPEAKER.
   SPEAKER = 0;
   TR1 = 0;
@@ -397,38 +397,7 @@ void playSong2() {
   playNote(notes4[9], 2, 1);
   displayNote(9);
   playNote(notes4[9], 3, 1);
-  // Measure 5.
-  playNote(0, 1, 1);
-  displayNote(11);
-  playNote(notes4[11], 2, 1);
-  displayNote(5);
-  playNote(notes5[5], 1, 1);
-  displayNote(9);
-  playNote(notes5[9], 2, 1);
-  displayNote(7);
-  playNote(notes5[7], 1, 1);
-  displayNote(5);
-  playNote(notes5[5], 1, 1);
-  // Measure 6.
-  displayNote(4);
-  playNote(notes5[4], 2, 1);
-  playNote(0, 1, 1);
-  displayNote(0);
-  playNote(notes5[0], 1, 1);
-  displayNote(4);
-  playNote(notes5[4], 2, 1);
-  displayNote(2);
-  playNote(notes5[2], 1, 1);
-  displayNote(0);
-  playNote(notes5[0], 1, 1);
-  // Measure 7.
-  displayNote(11);
-  playNote(notes4[11], 2, 1);
-  displayNote(11);
-  playNote(notes4[11], 1, 1);
-  displayNote(0);
-  
-  playNote(notes5[0], 1, 1);
+
   // Only Delay the Next Play of the song if We are not switching modes.
   if(!flag)
     timerover(SEC);
